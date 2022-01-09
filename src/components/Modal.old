@@ -1,0 +1,49 @@
+{
+  /* <Modal
+animationType="slide"
+transparent={true}
+visible={modalVisible}
+onRequestClose={toggleModal}>
+<View style={styles.modalContainer}>
+  <View style={styles.modalHeader}>
+    <Text style={styles.modalHeaderText}>Add a participant</Text>
+    <TouchableOpacity onPress={toggleModal}>
+      <MaterialIcons name="close" color={colors.black} size={30} />
+    </TouchableOpacity>
+  </View>
+  <Input
+    placeholder="* Enter the participant name"
+    placeholderTextColor={colors.primary}
+    name="name"
+    control={control}
+    defaultValue=""
+    style={styles.modalInput}
+  />
+</View>
+</Modal> */
+}
+
+// modalContainer: {
+//     display: 'flex',
+//     flex: 1,
+//     margin: 30,
+//     backgroundColor: colors.white,
+//     borderRadius: 10,
+//     maxHeight: '50%',
+//   },
+//   modalHeader: {
+//     display: 'flex',
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     flex: 1,
+//     marginTop: 20,
+//     marginHorizontal: 20,
+//   },
+//   modalHeaderText: {
+//     margin: 5,
+//     fontSize: 20,
+//     fontWeight: 'bold',
+//   },
+//   modalInput: {
+//     marginBottom: 50,
+//   },
