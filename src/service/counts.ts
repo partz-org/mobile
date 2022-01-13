@@ -3,13 +3,13 @@ import { baseUri, getData, mutateData } from "./helper";
 
 import type { Count } from "../types/count";
 
-const COUNTS = "counts";
+export const COUNTS = "counts";
 
 export const getCounts = async () =>
   getData<Count>(`${baseUri}/${COUNTS}/?all=true`);
 
-export const getUserCounts = async (userId: string) =>
-  getData<Count>(`${baseUri}/${COUNTS}/?userId=${userId}`);
+export const getUserCounts = async () =>
+  getData<Count[]>(`${baseUri}/${COUNTS}/me`);
 
 export const getCountById = async (id: string) =>
   getData<Count>(`${baseUri}/${COUNTS}/${id}`);

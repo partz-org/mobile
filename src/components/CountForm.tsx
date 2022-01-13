@@ -64,7 +64,7 @@ const CountForm: FC<CountFormProps> = ({
     <>
       <Container marginHorizontal={20}>
         <Input
-          autoFocus
+          autoFocus={!isEditing}
           placeholder={isEditing ? "Change the title " : "* Enter a title"}
           placeholderTextColor={colors.primary}
           defaultValue=""

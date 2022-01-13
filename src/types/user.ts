@@ -8,8 +8,7 @@ export interface User {
   createdAt: string;
   updatedAt: string;
   phoneNumber: string;
-  isLoggedIn: boolean;
-  __v: number;
-  token?: string;
+  token: string;
   id: string;
+  __v: number;
 }

@@ -4,8 +4,7 @@ import { useMutation, useQueryClient } from "react-query";
 import ParticipantCell from "../CreateCount/ParticipantCell";
 import { Card, Container, ErrorView } from "../../../../components/";
 import { useUser } from "../../../../context/userContext";
-import { updateStoredUser } from "../../../../helpers/updateStoredUser";
-import { handleError, updateParticipant } from "../../../../service/";
+import { COUNTS, handleError, updateParticipant } from "../../../../service/";
 import { colors } from "../../../../theme/colors";
 import { JoinCountNavigation, JoinCountRoute } from "../../types";
 
@@ -15,7 +14,7 @@ interface JoinCountProps {
 }
 
 const JoinCount: FC<JoinCountProps> = ({ route, navigation }) => {
-  const { user: userContext, dispatch } = useUser();
+  const { user: userContext } = useUser();
   const QC = useQueryClient();
 
   const { countId, countTitle, countTotal, participants } = route.params;
@@ -31,9 +30,9 @@ const JoinCount: FC<JoinCountProps> = ({ route, navigation }) => {
       updateParticipant(participantId, { user: userId }),
     {
       onError: handleError,
-      onSuccess: () => {
-        updateStoredUser(dispatch, userContext);
-        QC.refetchQueries([countId]);
+      onSuccess: async () => {
+        await QC.refetchQueries(countId);
+        await QC.refetchQueries(COUNTS);
         navigation.navigate("ExpenseList", countParams);
       },
     }

@@ -4,13 +4,14 @@ import { colors } from "../../theme/colors";
 import { SettingsStackParamList } from "./types";
 import { Login, PhoneLogin, Settings } from "./screens";
 import { useUser } from "../../context";
+import { auth } from "../../utils";
 
 const Stack = createNativeStackNavigator<SettingsStackParamList>();
 
 const SettingsNavigator = () => {
   const { user } = useUser();
 
-  const isUserLoggedIn = !!user.phoneNumber && user.isLoggedIn;
+  const isUserLoggedIn = !!user.phoneNumber && !!auth.currentUser?.uid;
 
   return (
     <Stack.Navigator

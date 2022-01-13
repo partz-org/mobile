@@ -3,10 +3,10 @@ import type { User } from "../types/user";
 
 export type UpdateUserAction = {
   type: "UPDATE_STATE";
-  payload: { user?: User; token?: string };
+  payload: { user: User };
 };
 type Dispatch = (action: UpdateUserAction) => void;
-export type UserState = { user: User; token: string };
+export type UserState = { user: User };
 type UserProviderProps = { children: React.ReactNode };
 
 const UserStateContext = createContext<
@@ -14,18 +14,15 @@ const UserStateContext = createContext<
 >(undefined);
 
 const initialUserState: UserState = {
-  token: "",
   user: {} as User,
 };
 
-function userReducer(state: UserState, action: UpdateUserAction) {
+function userReducer(_state: UserState, action: UpdateUserAction) {
   const { type, payload } = action;
   switch (type) {
     case "UPDATE_STATE": {
       return {
-        ...state,
-        ...payload,
-        user: { ...state.user, ...payload.user },
+        user: payload.user,
       };
     }
     default: {
@@ -51,7 +48,6 @@ function useUser() {
   }
   return {
     dispatch: context.dispatch,
-    token: context.state.token,
     user: context.state.user,
   };
 }

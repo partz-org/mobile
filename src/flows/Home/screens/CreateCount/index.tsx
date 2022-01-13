@@ -10,24 +10,22 @@ import {
   initialCountState,
   ParticipantInput,
 } from "./helper";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { CountNavigation } from "../../types";
 import CountForm from "../../../../components/CountForm";
-import { updateStoredUser } from "../../../../helpers/updateStoredUser";
 import { useNotif, useUser } from "../../../../context/";
-import { createCount } from "../../../../service/counts";
+import { COUNTS, createCount } from "../../../../service/counts";
 
 const CreateCount: FC<CreateCountProps> = ({ navigation }) => {
-  const { dispatch, user: userContext } = useUser();
   const { sendNotif } = useNotif();
+  const QC = useQueryClient();
 
   const createCountMutation = useMutation(
     (newCount: CountInput) => createCount(newCount),
     {
       onError: handleError,
       onSuccess: async (data) => {
-        updateStoredUser(dispatch, userContext);
-
+        QC.refetchQueries([COUNTS]);
         Clipboard.setString(data!.id);
 
         // Clipboard.setString(`wej://joincount/${data!.id}`);
@@ -67,7 +65,6 @@ const CreateCount: FC<CreateCountProps> = ({ navigation }) => {
 
     createCountMutation.mutate({
       ...countFormState,
-      creatorId: user?.id,
       participants: totalParticipants,
       userToTag: countFormState.name,
     });
