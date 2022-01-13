@@ -1,11 +1,14 @@
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { useReducer } from "react";
-import { Alert } from "react-native";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { CountForm, ErrorView, Loader } from "../../../../components";
-import { useNotif, useUser } from "../../../../context";
-import { isSimilarArrayOfString, updateStoredUser } from "../../../../helpers";
+import { useNotif } from "../../../../context";
 import {
+  getParticipantNames,
+  isSimilarArrayOfString,
+} from "../../../../helpers";
+import {
+  COUNTS,
   deleteCount,
   deleteParticipant,
   handleError,
@@ -31,26 +34,27 @@ const EditCount: FC<EditCountProps> = ({ route, navigation }) => {
     isLoading,
     error,
     refetch,
-    isFetching,
   } = useQueryCountById(route.params.countId);
+
   const { sendNotif } = useNotif();
 
-  const [loading, setLoading] = useState(isLoading);
+  if (!currentCount) return <ErrorView label="Something went wrong" />;
+
   const participantNames = useMemo(
-    () => currentCount?.participants.map((p) => p.name) as string[],
-    [currentCount?.participants]
+    () => getParticipantNames(currentCount.participants),
+    [currentCount.participants]
   );
 
+  const QC = useQueryClient();
+
   useEffect(() => {
-    navigation.setParams({ countTitle: currentCount?.title });
+    navigation.setParams({ countTitle: currentCount.title });
   }, [currentCount, navigation]);
   useEffect(() => {
     setParticipants(participantNames);
-  }, [participantNames, isFetching]);
+  }, [participantNames]);
 
   const [participants, setParticipants] = useState<string[]>(participantNames);
-
-  const { dispatch, user: userContext } = useUser();
 
   const updateCountMutation = useMutation(
     ({ countId, newCount }: { newCount: CountInput; countId: string }) =>
@@ -61,38 +65,31 @@ const EditCount: FC<EditCountProps> = ({ route, navigation }) => {
         sendNotif({
           message: "Your count was updated!",
         });
-        updateStoredUser(dispatch, userContext);
-        setLoading(true);
+        QC.refetchQueries([COUNTS]);
         await refetch();
-        setLoading(false);
       },
     }
   );
-  const deleteCountMutation = useMutation(
-    () => deleteCount(currentCount?.id!),
-    {
-      onSuccess: async () => {
-        sendNotif({
-          level: "danger",
-          message: "Your count was deleted.",
-        });
-        updateStoredUser(dispatch, userContext);
-        navigation.navigate("CountList");
-      },
-    }
-  );
+  const deleteCountMutation = useMutation(() => deleteCount(currentCount.id!), {
+    onSuccess: async () => {
+      sendNotif({
+        level: "danger",
+        message: "Your count was deleted.",
+      });
+      QC.refetchQueries([COUNTS]);
+      navigation.navigate("CountList");
+    },
+  });
 
   const deleteParticipantMutation = useMutation(
     ({ participantId }: { participantId: string }) =>
       deleteParticipant(participantId),
     {
       onError: handleError,
-      onSuccess: async () => {
-        updateStoredUser(dispatch, userContext);
-        setLoading(true);
+      onSuccess: async (data) => {
+        QC.refetchQueries([COUNTS]);
         await refetch();
-        setLoading(false);
-        Alert.alert("Success!", "The participant was removed from this count.");
+        sendNotif({ message: data.message });
       },
     }
   );
@@ -102,7 +99,7 @@ const EditCount: FC<EditCountProps> = ({ route, navigation }) => {
     initialCountState
   );
 
-  if (loading) return <Loader />;
+  if (isLoading) return <Loader />;
 
   if (!currentCount || error) return <ErrorView />;
 
@@ -111,7 +108,7 @@ const EditCount: FC<EditCountProps> = ({ route, navigation }) => {
   };
 
   const deleteParticipantFromCount = (participant: string) => {
-    const participantId = currentCount?.participants.find(
+    const participantId = currentCount.participants.find(
       (p) => p.name === participant
     )?.id;
 

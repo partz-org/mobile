@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FC } from "react";
 import * as Clipboard from "expo-clipboard";
 import { StyleSheet, Text, View } from "react-native";
-import { useQueryClient } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import {
   BottomContainer,
   Button,
@@ -12,8 +12,13 @@ import {
   Input,
 } from "../../../../components";
 
-import { useNotif, useUser } from "../../../../context";
-import { getCountById, handleError } from "../../../../service";
+import { useNotif } from "../../../../context";
+import {
+  COUNTS,
+  getCountById,
+  getUserCounts,
+  handleError,
+} from "../../../../service";
 import { getParticipantNames, sortAlphabetically } from "../../../../helpers";
 import { commonStyles, colors } from "../../../../theme";
 
@@ -27,9 +32,10 @@ interface CountListProps {
 const CountList: FC<CountListProps> = ({ navigation }) => {
   const [shouldShowModal, setShouldShowModal] = useState(false);
   const [countIdToJoin, setCountIdToJoin] = useState<string>("");
-  const { user } = useUser();
 
   const QC = useQueryClient();
+
+  const { data: userCounts } = useQuery<Count[]>(COUNTS, getUserCounts);
 
   const { navigate } = navigation;
 
@@ -72,8 +78,8 @@ const CountList: FC<CountListProps> = ({ navigation }) => {
       <Container scrollViewMargin={100}>
         <Text style={commonStyles.textHeading}>Your Counts</Text>
 
-        {user?.counts?.map((count: Count) => {
-          const participantNames = getParticipantNames(count);
+        {userCounts?.map((count: Count) => {
+          const participantNames = getParticipantNames(count.participants);
 
           return (
             <ItemList
@@ -104,6 +110,7 @@ const CountList: FC<CountListProps> = ({ navigation }) => {
           title="Enter the count N° provided"
         >
           <Input
+            autoFocus
             value={countIdToJoin}
             onChangeText={(e) => {
               setCountIdToJoin(e);

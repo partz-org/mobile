@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useUser } from "../context";
 import { handleError, createTempUser } from "../service";
 import * as Notifications from "expo-notifications";
+import { User } from "../types/user";
 
 export const useFetchOrCreateUser = () => {
   const { user, dispatch } = useUser();
@@ -13,7 +14,7 @@ export const useFetchOrCreateUser = () => {
       const getOrCreateUser = async () => {
         const result = await AsyncStorage.getItem("user");
 
-        const storedUser = JSON.parse(result || "{}");
+        const storedUser: User = JSON.parse(result || "{}");
 
         if (storedUser?.id) {
           dispatch({
@@ -25,18 +26,11 @@ export const useFetchOrCreateUser = () => {
             const { data: expoToken } =
               await Notifications.getExpoPushTokenAsync();
 
-            const newUser = await createTempUser({ expoToken: expoToken });
-            await AsyncStorage.setItem(
-              "user",
-              JSON.stringify({
-                ...newUser,
-                token: undefined,
-              })
-            );
-            await AsyncStorage.setItem("token", newUser.token || "");
+            const newUser = await createTempUser({ expoToken });
+            await AsyncStorage.setItem("user", JSON.stringify(newUser));
             dispatch({
               payload: {
-                user: { ...newUser, token: undefined },
+                user: newUser,
               },
               type: "UPDATE_STATE",
             });

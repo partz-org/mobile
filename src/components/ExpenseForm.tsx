@@ -23,8 +23,7 @@ import {
   ExpenseFormState,
 } from "../flows/Home/screens/CreateExpense/expenseFormReducer";
 import type { Count } from "../types/count";
-import { sortAlphabetically } from "../helpers/sortAlphabetically";
-import { getParticipantNames } from "../helpers/getParticipantNames";
+import { getParticipantNames, sortAlphabetically } from "../helpers";
 
 interface ExpenseFormProps {
   currentCount: Count;
@@ -51,7 +50,7 @@ const ExpenseForm: FC<ExpenseFormProps> = ({
   const [showPayerModal, setShowPayerModal] = useState(false);
   const [showOwerModal, setShowOwerModal] = useState(false);
   const participantNames = useMemo(
-    () => getParticipantNames(currentCount),
+    () => getParticipantNames(currentCount.participants),
     [currentCount]
   );
   const isAllTaggedAsPayers = participantNames.every((name) =>
@@ -71,7 +70,7 @@ const ExpenseForm: FC<ExpenseFormProps> = ({
   return (
     <Container marginHorizontal={20}>
       <Input
-        autoFocus
+        autoFocus={!isEditing}
         placeholder={isEditing ? "Change the title" : "* Enter a title"}
         placeholderTextColor={colors.primary}
         defaultValue=""

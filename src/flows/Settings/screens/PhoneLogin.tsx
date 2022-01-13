@@ -7,9 +7,9 @@ import { app, auth } from "../../../utils/firebase";
 import { useNotif, useUser } from "../../../context";
 import { colors } from "../../../theme";
 import { useNavigation } from "@react-navigation/native";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { updateStoredUser } from "../../../helpers";
-import { LoginPayload, login, handleError } from "../../../service";
+import { LoginPayload, login, handleError, COUNTS } from "../../../service";
 
 const PhoneLogin: FC = () => {
   const [verificationId, setVerificationId] = useState("");
@@ -19,13 +19,15 @@ const PhoneLogin: FC = () => {
   const recaptchaVerifier = React.useRef(null);
   const { dispatch } = useUser();
   const { goBack } = useNavigation();
+  const QC = useQueryClient();
 
   const loginMutation = useMutation(
     (loginInput: LoginPayload) => login(loginInput),
     {
       onError: handleError,
       onSuccess: async (loggedUser) => {
-        updateStoredUser(dispatch, loggedUser);
+        await updateStoredUser(dispatch, loggedUser);
+        await QC.refetchQueries([COUNTS]);
 
         sendNotif({
           message: "Login successful!",
@@ -72,7 +74,7 @@ const PhoneLogin: FC = () => {
       <BottomContainer>
         <Button
           title="Send Code"
-          disabled={!phoneNumber}
+          disabled={!phoneNumber && !!verificationId}
           onPress={async () => {
             try {
               const phoneProvider = new PhoneAuthProvider(auth);
@@ -89,7 +91,7 @@ const PhoneLogin: FC = () => {
         />
         <Button
           title="Verify Code"
-          disabled={!verificationId}
+          disabled={!verificationCode}
           type="secondary"
           onPress={async () => {
             try {

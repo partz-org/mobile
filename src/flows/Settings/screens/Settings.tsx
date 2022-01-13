@@ -1,10 +1,10 @@
 import React, { FC } from "react";
 import { Text } from "react-native";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { Button, Container } from "../../../components";
 import { useNotif, useUser } from "../../../context";
 import { updateStoredUser } from "../../../helpers";
-import { handleError, logout } from "../../../service";
+import { COUNTS, handleError, logout } from "../../../service";
 import { colors, commonStyles } from "../../../theme";
 import { auth } from "../../../utils/firebase";
 
@@ -13,11 +13,15 @@ const Settings: FC = () => {
 
   const { sendNotif } = useNotif();
   const { dispatch } = useUser();
+  const QC = useQueryClient();
 
   const logoutMutation = useMutation(() => logout(), {
     onError: handleError,
-    onSuccess: async (loggedOffUser) => {
-      updateStoredUser(dispatch, loggedOffUser);
+
+    onSuccess: async (newTempUser) => {
+      await updateStoredUser(dispatch, newTempUser);
+      await auth.signOut();
+      await QC.refetchQueries([COUNTS]);
     },
   });
 
@@ -33,8 +37,6 @@ const Settings: FC = () => {
         iconColor={colors.primary}
         onPress={async () => {
           try {
-            auth.signOut();
-
             logoutMutation.mutate();
 
             sendNotif({ message: "You are now logged out!" });

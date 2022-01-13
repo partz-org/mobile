@@ -17,16 +17,9 @@ import {
   ExpenseForm,
   Loader,
 } from "../../../../components";
-import {
-  createExpense,
-  getExpenseById,
-  handleError,
-} from "../../../../service";
+import { COUNTS, createExpense, handleError } from "../../../../service";
 import { useQueryCountById } from "../../hooks";
-import {
-  getCurrentParticipantName,
-  updateStoredUser,
-} from "../../../../helpers";
+import { getCurrentParticipantName } from "../../../../helpers";
 import { useNotif, useUser } from "../../../../context";
 
 interface CreateExpenseProps {
@@ -43,22 +36,23 @@ const CreateExpense: FC<CreateExpenseProps> = ({ route, navigation }) => {
     error,
   } = useQueryCountById(route.params.countId);
 
-  const { dispatch, user: userContext } = useUser();
+  const { user: userContext } = useUser();
 
   const QC = useQueryClient();
+
   const { sendNotif } = useNotif();
 
   const createExpenseMutation = useMutation(
     (newExpense: ExpenseInput) => createExpense(newExpense),
     {
       onError: handleError,
-      onSuccess: async (data) => {
+      onSuccess: async () => {
+        await QC.refetchQueries(route.params.countId);
+        await QC.refetchQueries(COUNTS);
+
         sendNotif({
           message: "Your expense was created.",
         });
-        updateStoredUser(dispatch, userContext);
-        await QC.refetchQueries([route.params.countId]);
-        QC.fetchQuery([data.id], () => getExpenseById(data.id));
         navigation.goBack();
       },
     }

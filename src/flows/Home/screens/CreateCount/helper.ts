@@ -12,7 +12,6 @@ export interface CountInput extends Partial<CountFormState> {
   participantToRemove?: string;
   participants?: ParticipantInput[];
   currency?: string;
-  creatorId?: string;
   userToTag?: string;
 }
 
@@ -24,7 +23,7 @@ export const initialCountState: CountFormState = {
 
 export const countFormReducer = (
   state = initialCountState,
-  { field, payload }: { field: string; payload: string },
+  { field, payload }: { field: string; payload: string }
 ) => {
   if (payload) return { ...state, [field]: capitalizeWord(payload) };
   return { ...state, [field]: payload };
