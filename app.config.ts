@@ -4,7 +4,7 @@ export default {
     name: "Partz",
     jsEngine: "hermes",
     slug: "Partz",
-    version: "1.0.4",
+    version: "1.0.6",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     scheme: "myapp",
@@ -29,7 +29,7 @@ export default {
       },
       package: "com.partz.app",
       googleServicesFile: "./config/google-services.json",
-      versionCode: 5,
+      versionCode: 6,
     },
     web: {
       favicon: "./assets/images/favicon.png",
