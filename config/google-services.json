@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "698644857046",
+    "project_id": "partz-21052",
+    "storage_bucket": "partz-21052.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:698644857046:android:ea92b031c0a7b222828977",
+        "android_client_info": {
+          "package_name": "com.partz.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "698644857046-1vtghnpks6aj4rk5sfsie18fta7nq0d6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcxnNQ2F8lj7y0NxwpUVCJFpeVtC0VG78"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "698644857046-1vtghnpks6aj4rk5sfsie18fta7nq0d6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
