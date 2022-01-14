@@ -9,7 +9,7 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
-config
+config/publish-to-android-store-api.json
 
 # macOS
 .DS_Store

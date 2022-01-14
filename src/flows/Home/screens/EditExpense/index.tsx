@@ -9,11 +9,9 @@ import {
   Button,
 } from "../../../../components";
 import { useNotif, useUser } from "../../../../context";
+import { getCurrentParticipantName } from "../../../../helpers";
 import {
-  getCurrentParticipantName,
-  updateStoredUser,
-} from "../../../../helpers";
-import {
+  COUNTS,
   deleteExpense,
   getExpenseById,
   handleError,
@@ -66,7 +64,7 @@ const EditExpense: FC<EditExpenseProps> = ({
 
   const QC = useQueryClient();
 
-  const { user: userContext, dispatch } = useUser();
+  const { user: userContext } = useUser();
 
   const { sendNotif } = useNotif();
 
@@ -79,10 +77,9 @@ const EditExpense: FC<EditExpenseProps> = ({
         sendNotif({
           message: "Your expense was updated!",
         });
-        updateStoredUser(dispatch, userContext);
         await refetchExpense();
-        QC.refetchQueries([currentExpense?.count.id]);
-        navigation.goBack();
+        await QC.refetchQueries(currentExpense?.count.id);
+        await QC.refetchQueries(COUNTS);
       },
     }
   );
@@ -92,8 +89,8 @@ const EditExpense: FC<EditExpenseProps> = ({
         level: "danger",
         message: "Your expense was deleted.",
       });
-      updateStoredUser(dispatch, userContext);
-      QC.refetchQueries([currentExpense?.count.id]);
+      await QC.refetchQueries(currentExpense?.count.id);
+      await QC.refetchQueries(COUNTS);
       navigation.goBack();
     },
   });
