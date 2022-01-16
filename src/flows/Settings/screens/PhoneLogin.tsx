@@ -2,12 +2,12 @@ import React, { FC, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { PhoneAuthProvider, signInWithCredential } from "firebase/auth";
-import { Button, Input, BottomContainer } from "@/components";
-import { useNotif, useUser } from "@/context";
-import { updateStoredUser } from "@/helpers";
-import { LoginPayload, login, handleError, COUNTS } from "@/service";
-import { colors } from "@/theme";
-import { app, auth } from "@/utils";
+import { Button, Input, BottomContainer } from "~/components";
+import { useNotif, useUser } from "~/context";
+import { updateStoredUser } from "~/helpers";
+import { LoginPayload, login, handleError, COUNTS } from "~/service";
+import { colors } from "~/theme";
+import { app, auth } from "~/utils";
 import { useNavigation } from "@react-navigation/native";
 import { useQueryClient, useMutation } from "react-query";
 

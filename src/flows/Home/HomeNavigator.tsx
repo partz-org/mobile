@@ -10,7 +10,7 @@ import EditExpense from "./screens/EditExpense";
 import CountBalances from "./screens/CountBalances";
 import CountList from "./screens/CountList";
 import ExpenseList from "./screens/ExpenseList";
-import { colors } from "@/theme";
+import { colors } from "~/theme";
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 

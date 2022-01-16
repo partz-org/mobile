@@ -10,12 +10,12 @@ import {
   ItemList,
   BottomDrawer,
   Input,
-} from "@/components";
-import { useNotif } from "@/context";
-import { getParticipantNames, sortAlphabetically } from "@/helpers";
-import { COUNTS, getUserCounts, getCountById, handleError } from "@/service";
-import { commonStyles, colors } from "@/theme";
-import { Count } from "@/types/count";
+} from "~/components";
+import { useNotif } from "~/context";
+import { getParticipantNames, sortAlphabetically } from "~/helpers";
+import { COUNTS, getUserCounts, getCountById, handleError } from "~/service";
+import { commonStyles, colors } from "~/theme";
+import { Count } from "~/types/count";
 import { CountListNavigation } from "../../types";
 
 interface CountListProps {

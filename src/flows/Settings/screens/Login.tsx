@@ -1,8 +1,8 @@
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import React, { FC } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Button, Card } from "@/components";
-import { colors } from "@/theme";
+import { Button, Card } from "~/components";
+import { colors } from "~/theme";
 import type { SettingsStackParamList } from "../types";
 
 const Login: FC = () => {
