@@ -1,26 +1,19 @@
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { useReducer } from "react";
 import { useMutation, useQueryClient } from "react-query";
-import { CountForm, ErrorView, Loader } from "../../../../components";
-import { useNotif } from "../../../../context";
+import { ErrorView, Loader, CountForm } from "~/components";
+import { useNotif } from "~/context";
+import { getParticipantNames, isSimilarArrayOfString } from "~/helpers";
 import {
-  getParticipantNames,
-  isSimilarArrayOfString,
-} from "../../../../helpers";
-import {
+  updateCount,
+  handleError,
   COUNTS,
   deleteCount,
   deleteParticipant,
-  handleError,
-  updateCount,
-} from "../../../../service";
+} from "~/service";
 import { useQueryCountById } from "../../hooks";
 import { EditCountNavigation, EditCountRoute } from "../../types";
-import {
-  countFormReducer,
-  CountInput,
-  initialCountState,
-} from "../CreateCount/helper";
+import { countFormReducer, initialCountState } from "../CreateCount/helper";
 import BottomButtons from "./BottomButtons";
 
 interface EditCountProps {
@@ -33,7 +26,7 @@ const EditCount: FC<EditCountProps> = ({ route, navigation }) => {
     data: currentCount,
     isLoading,
     error,
-    refetch,
+    refetch: refetchCount,
   } = useQueryCountById(route.params.countId);
 
   const { sendNotif } = useNotif();
@@ -56,21 +49,17 @@ const EditCount: FC<EditCountProps> = ({ route, navigation }) => {
 
   const [participants, setParticipants] = useState<string[]>(participantNames);
 
-  const updateCountMutation = useMutation(
-    ({ countId, newCount }: { newCount: CountInput; countId: string }) =>
-      updateCount(countId, newCount),
-    {
-      onError: handleError,
-      onSuccess: async () => {
-        sendNotif({
-          message: "Your count was updated!",
-        });
-        QC.refetchQueries([COUNTS]);
-        await refetch();
-      },
-    }
-  );
-  const deleteCountMutation = useMutation(() => deleteCount(currentCount.id!), {
+  const updateCountMutation = useMutation(updateCount, {
+    onError: handleError,
+    onSuccess: async () => {
+      sendNotif({
+        message: "Your count was updated!",
+      });
+      QC.refetchQueries([COUNTS]);
+      await refetchCount();
+    },
+  });
+  const deleteCountMutation = useMutation(deleteCount, {
     onSuccess: async () => {
       sendNotif({
         level: "danger",
@@ -81,18 +70,14 @@ const EditCount: FC<EditCountProps> = ({ route, navigation }) => {
     },
   });
 
-  const deleteParticipantMutation = useMutation(
-    ({ participantId }: { participantId: string }) =>
-      deleteParticipant(participantId),
-    {
-      onError: handleError,
-      onSuccess: async (data) => {
-        QC.refetchQueries([COUNTS]);
-        await refetch();
-        sendNotif({ message: data.message });
-      },
-    }
-  );
+  const deleteParticipantMutation = useMutation(deleteParticipant, {
+    onError: handleError,
+    onSuccess: async (data) => {
+      QC.refetchQueries([COUNTS]);
+      await refetchCount();
+      sendNotif({ message: data.message });
+    },
+  });
 
   const [countFormState, dispatchFormState] = useReducer(
     countFormReducer,
@@ -114,9 +99,7 @@ const EditCount: FC<EditCountProps> = ({ route, navigation }) => {
 
     if (!participantId) return;
 
-    deleteParticipantMutation.mutate({
-      participantId,
-    });
+    deleteParticipantMutation.mutate(participantId);
   };
 
   const onPressValidate = () => {
@@ -132,9 +115,7 @@ const EditCount: FC<EditCountProps> = ({ route, navigation }) => {
     });
   };
 
-  const onPressDelete = () => {
-    deleteCountMutation.mutate();
-  };
+  const onPressDelete = () => deleteCountMutation.mutate(currentCount.id);
 
   const cannotSubmit =
     countFormState.title.length === 0 &&

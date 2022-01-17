@@ -1,21 +1,19 @@
 import React, { FC } from "react";
 import { Text } from "react-native";
 import { useMutation, useQueryClient } from "react-query";
-import { Button, Container } from "../../../components";
-import { useNotif, useUser } from "../../../context";
-import { updateStoredUser } from "../../../helpers";
-import { COUNTS, handleError, logout } from "../../../service";
-import { colors, commonStyles } from "../../../theme";
-import { auth } from "../../../utils/firebase";
+import { Button, Container } from "~/components";
+import { useNotif, useUser } from "~/context";
+import { updateStoredUser } from "~/helpers";
+import { logout, handleError, COUNTS } from "~/service";
+import { commonStyles, colors } from "~/theme";
+import { auth } from "~/utils";
 
 const Settings: FC = () => {
-  logout;
-
   const { sendNotif } = useNotif();
   const { dispatch } = useUser();
   const QC = useQueryClient();
 
-  const logoutMutation = useMutation(() => logout(), {
+  const logoutMutation = useMutation(logout, {
     onError: handleError,
 
     onSuccess: async (newTempUser) => {
@@ -27,7 +25,7 @@ const Settings: FC = () => {
 
   return (
     <Container marginHorizontal={20}>
-      <Text style={commonStyles.textHeading}>{"You are now loged in!"}</Text>
+      <Text style={commonStyles.textHeading}>{"You are now logged in!"}</Text>
       <Text style={commonStyles.textHeading}>{"Work in Progress"}</Text>
       <Text style={commonStyles.textHeading}>
         {"New features will arrive soon 😁"}

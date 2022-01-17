@@ -2,33 +2,31 @@ import React, { FC, useEffect, useReducer, useState } from "react";
 import { Platform, View } from "react-native";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
-  Loader,
-  ErrorView,
-  ExpenseForm,
   BottomContainer,
   Button,
-} from "../../../../components";
-import { useNotif, useUser } from "../../../../context";
-import { getCurrentParticipantName } from "../../../../helpers";
+  ErrorView,
+  ExpenseForm,
+  Loader,
+} from "~/components";
+import { useUser, useNotif } from "~/context";
+import { getCurrentParticipantName } from "~/helpers";
 import {
+  getExpenseById,
+  updateExpense,
+  handleError,
   COUNTS,
   deleteExpense,
-  getExpenseById,
-  handleError,
-  updateExpense,
-} from "../../../../service";
-import { colors, commonStyles } from "../../../../theme";
+} from "~/service";
+import { commonStyles, colors } from "~/theme";
+import { Expense } from "~/types/expense";
+import { EditExpenseRoute, CountListNavigation } from "../../types";
 import {
+  expenseFormReducer,
+  initialExpenseState,
   cannotSubmitExpense,
   ExpenseActionField,
-  expenseFormReducer,
-  ExpenseInput,
-  initialExpenseState,
 } from "../CreateExpense/expenseFormReducer";
 import { generateInitialState } from "./helper";
-
-import type { Expense } from "../../../../types/expense";
-import type { EditExpenseRoute, CountListNavigation } from "../../types";
 interface EditExpenseProps {
   route: EditExpenseRoute;
   navigation: CountListNavigation;
@@ -68,22 +66,18 @@ const EditExpense: FC<EditExpenseProps> = ({
 
   const { sendNotif } = useNotif();
 
-  const updateExpenseMutation = useMutation(
-    ({ newExpense }: { newExpense: ExpenseInput }) =>
-      updateExpense(expenseId, newExpense),
-    {
-      onError: handleError,
-      onSuccess: async () => {
-        sendNotif({
-          message: "Your expense was updated!",
-        });
-        await refetchExpense();
-        await QC.refetchQueries(currentExpense?.count.id);
-        await QC.refetchQueries(COUNTS);
-      },
-    }
-  );
-  const deleteExpenseMutation = useMutation(() => deleteExpense(expenseId), {
+  const updateExpenseMutation = useMutation(updateExpense, {
+    onError: handleError,
+    onSuccess: async () => {
+      sendNotif({
+        message: "Your expense was updated!",
+      });
+      await refetchExpense();
+      await QC.refetchQueries(currentExpense?.count.id);
+      await QC.refetchQueries(COUNTS);
+    },
+  });
+  const deleteExpenseMutation = useMutation(deleteExpense, {
     onSuccess: async () => {
       sendNotif({
         level: "danger",
@@ -131,6 +125,7 @@ const EditExpense: FC<EditExpenseProps> = ({
             iconColor={colors.primary}
             onPress={() => {
               updateExpenseMutation.mutate({
+                expenseId,
                 newExpense: {
                   ...expenseFormState,
                   mutatedBy: getCurrentParticipantName(
@@ -146,9 +141,7 @@ const EditExpense: FC<EditExpenseProps> = ({
             disabled={deleteExpenseMutation.isLoading}
             icon="delete"
             iconColor={colors.red}
-            onPress={() => {
-              deleteExpenseMutation.mutate();
-            }}
+            onPress={() => deleteExpenseMutation.mutate(expenseId)}
             title="Delete expense"
             type="danger"
           />
