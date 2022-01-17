@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { PhoneAuthProvider, signInWithCredential } from "firebase/auth";
@@ -8,7 +8,7 @@ import PhoneInput from "react-native-phone-number-input";
 import { Button, Input, BottomContainer, BottomDrawer } from "~/components";
 import { useNotif, useUser } from "~/context";
 import { updateStoredUser } from "~/helpers";
-import { LoginPayload, login, handleError, COUNTS } from "~/service";
+import { login, handleError, COUNTS } from "~/service";
 import { colors } from "~/theme";
 import { app, auth } from "~/utils";
 

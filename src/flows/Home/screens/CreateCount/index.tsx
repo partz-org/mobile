@@ -3,7 +3,7 @@ import { StyleSheet, Alert } from "react-native";
 import { useQueryClient, useMutation } from "react-query";
 import * as Clipboard from "expo-clipboard";
 import { Button, CountForm } from "~/components";
-import { useNotif, useUser } from "~/context";
+import { useNotif } from "~/context";
 import { createCount, handleError, COUNTS } from "~/service";
 import { colors } from "~/theme";
 import { CountNavigation } from "../../types";
@@ -32,7 +32,6 @@ const CreateCount: FC<CreateCountProps> = ({ navigation }) => {
       navigation.goBack();
     },
   });
-  const { user } = useUser();
 
   const [participants, setParticipants] = useState<string[]>([]);
 

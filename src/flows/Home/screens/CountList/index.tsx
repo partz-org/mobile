@@ -10,6 +10,8 @@ import {
   ItemList,
   BottomDrawer,
   Input,
+  ErrorView,
+  Loader,
 } from "~/components";
 import { useNotif } from "~/context";
 import { getParticipantNames, sortAlphabetically } from "~/helpers";
@@ -28,7 +30,14 @@ const CountList: FC<CountListProps> = ({ navigation }) => {
 
   const QC = useQueryClient();
 
-  const { data: userCounts } = useQuery<Count[]>(COUNTS, getUserCounts);
+  const { data: userCounts, isLoading } = useQuery<Count[]>(
+    COUNTS,
+    getUserCounts
+  );
+
+  if (isLoading) return <Loader />;
+
+  if (!userCounts) return <ErrorView label="Something went wrong." />;
 
   const { navigate } = navigation;
 
