@@ -126,13 +126,7 @@ const EditExpense: FC<EditExpenseProps> = ({
             onPress={() => {
               updateExpenseMutation.mutate({
                 expenseId,
-                newExpense: {
-                  ...expenseFormState,
-                  mutatedBy: getCurrentParticipantName(
-                    currentExpense.count.participants,
-                    userContext
-                  ),
-                },
+                newExpense: expenseFormState,
               });
             }}
             title="Edit expense"
