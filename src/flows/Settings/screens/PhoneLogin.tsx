@@ -2,14 +2,14 @@ import React, { FC, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { PhoneAuthProvider, signInWithCredential } from "firebase/auth";
-import { BottomContainer, Button, Input } from "../../../components";
-import { app, auth } from "../../../utils/firebase";
-import { useNotif, useUser } from "../../../context";
-import { colors } from "../../../theme";
+import { Button, Input, BottomContainer } from "~/components";
+import { useNotif, useUser } from "~/context";
+import { updateStoredUser } from "~/helpers";
+import { LoginPayload, login, handleError, COUNTS } from "~/service";
+import { colors } from "~/theme";
+import { app, auth } from "~/utils";
 import { useNavigation } from "@react-navigation/native";
-import { useMutation, useQueryClient } from "react-query";
-import { updateStoredUser } from "../../../helpers";
-import { LoginPayload, login, handleError, COUNTS } from "../../../service";
+import { useQueryClient, useMutation } from "react-query";
 
 const PhoneLogin: FC = () => {
   const [verificationId, setVerificationId] = useState("");

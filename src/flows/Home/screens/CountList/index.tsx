@@ -4,26 +4,19 @@ import * as Clipboard from "expo-clipboard";
 import { StyleSheet, Text, View } from "react-native";
 import { useQuery, useQueryClient } from "react-query";
 import {
-  BottomContainer,
   Button,
+  BottomContainer,
   Container,
   ItemList,
   BottomDrawer,
   Input,
-} from "../../../../components";
-
-import { useNotif } from "../../../../context";
-import {
-  COUNTS,
-  getCountById,
-  getUserCounts,
-  handleError,
-} from "../../../../service";
-import { getParticipantNames, sortAlphabetically } from "../../../../helpers";
-import { commonStyles, colors } from "../../../../theme";
-
-import type { CountListNavigation } from "../../types";
-import type { Count } from "../../../../types/count";
+} from "~/components";
+import { useNotif } from "~/context";
+import { getParticipantNames, sortAlphabetically } from "~/helpers";
+import { COUNTS, getUserCounts, getCountById, handleError } from "~/service";
+import { commonStyles, colors } from "~/theme";
+import { Count } from "~/types/count";
+import { CountListNavigation } from "../../types";
 
 interface CountListProps {
   navigation: CountListNavigation;

@@ -1,6 +1,5 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { colors } from "../../theme/colors";
 import CreateCount from "./screens/CreateCount";
 import JoinCount from "./screens/JoinCount";
 import EditCount from "./screens/EditCount";
@@ -11,6 +10,7 @@ import EditExpense from "./screens/EditExpense";
 import CountBalances from "./screens/CountBalances";
 import CountList from "./screens/CountList";
 import ExpenseList from "./screens/ExpenseList";
+import { colors } from "~/theme";
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 

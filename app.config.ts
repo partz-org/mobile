@@ -4,7 +4,7 @@ export default {
     name: "Partz",
     jsEngine: "hermes",
     slug: "Partz",
-    version: "1.0.6",
+    version: "1.0.7",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     scheme: "myapp",
@@ -14,14 +14,6 @@ export default {
       resizeMode: "contain",
       backgroundColor: "#ffffff",
     },
-    updates: {
-      fallbackToCacheTimeout: 0,
-    },
-    assetBundlePatterns: ["**/*"],
-    ios: {
-      supportsTablet: true,
-      bundleIdentifier: "com.partz.app",
-    },
     android: {
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",
@@ -29,7 +21,15 @@ export default {
       },
       package: "com.partz.app",
       googleServicesFile: "./config/google-services.json",
-      versionCode: 6,
+      versionCode: 7,
+    },
+    updates: {
+      fallbackToCacheTimeout: 0,
+    },
+    assetBundlePatterns: ["**/*"],
+    ios: {
+      supportsTablet: true,
+      bundleIdentifier: "com.partz.app",
     },
     web: {
       favicon: "./assets/images/favicon.png",
