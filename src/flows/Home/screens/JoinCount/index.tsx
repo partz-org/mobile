@@ -1,12 +1,12 @@
 import React, { FC } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { useMutation, useQueryClient } from "react-query";
-import ParticipantCell from "../CreateCount/ParticipantCell";
-import { Card, Container, ErrorView } from "../../../../components/";
-import { useUser } from "../../../../context/userContext";
-import { COUNTS, handleError, updateParticipant } from "../../../../service/";
-import { colors } from "../../../../theme/colors";
+import { ErrorView, Container, Card } from "~/components";
+import { useUser } from "~/context";
+import { updateParticipant, handleError, COUNTS } from "~/service";
+import { colors } from "~/theme";
 import { JoinCountNavigation, JoinCountRoute } from "../../types";
+import ParticipantCell from "../CreateCount/ParticipantCell";
 
 interface JoinCountProps {
   navigation: JoinCountNavigation;
@@ -25,18 +25,14 @@ const JoinCount: FC<JoinCountProps> = ({ route, navigation }) => {
     countTotal,
   };
 
-  const tagUserToParticipant = useMutation(
-    ({ participantId, userId }: { participantId: string; userId: string }) =>
-      updateParticipant(participantId, { user: userId }),
-    {
-      onError: handleError,
-      onSuccess: async () => {
-        await QC.refetchQueries(countId);
-        await QC.refetchQueries(COUNTS);
-        navigation.navigate("ExpenseList", countParams);
-      },
-    }
-  );
+  const tagUserToParticipant = useMutation(updateParticipant, {
+    onError: handleError,
+    onSuccess: async () => {
+      await QC.refetchQueries(countId);
+      await QC.refetchQueries(COUNTS);
+      navigation.navigate("ExpenseList", countParams);
+    },
+  });
 
   if (!participants) {
     return (

@@ -1,6 +1,5 @@
+import { Participant } from "~/types/count";
 import { baseUri, mutateData } from "./helper";
-
-import type { Participant } from "../types/count";
 
 const PARTICIPANTS = "participants";
 
@@ -11,9 +10,15 @@ export const deleteParticipant = async (id: string) =>
     "DELETE"
   );
 
-type UpdateParticipantProps = { user: string };
-
-export const updateParticipant = async (
-  id: string,
-  body: UpdateParticipantProps
-) => mutateData<Participant>(`${baseUri}/${PARTICIPANTS}/${id}`, body, "PUT");
+export const updateParticipant = async ({
+  participantId,
+  userId,
+}: {
+  participantId: string;
+  userId: string;
+}) =>
+  mutateData<Participant>(
+    `${baseUri}/${PARTICIPANTS}/${participantId}`,
+    { user: userId },
+    "PUT"
+  );

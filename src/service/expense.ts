@@ -1,7 +1,6 @@
-import { ExpenseInput } from "../flows/Home/screens/CreateExpense/expenseFormReducer";
-import { baseUri, getData, mutateData } from "./helper";
-
-import type { Expense } from "../types/expense";
+import { ExpenseInput } from "~/flows/Home/screens/CreateExpense/expenseFormReducer";
+import { Expense } from "~/types/expense";
+import { getData, baseUri, mutateData } from "./helper";
 
 const EXPENSES = "expenses";
 
@@ -11,8 +10,14 @@ export const getExpenseById = async (id: string) =>
 export const createExpense = async (body: ExpenseInput) =>
   mutateData<Expense>(`${baseUri}/${EXPENSES}`, body, "POST");
 
-export const updateExpense = async (id: string, body: ExpenseInput) =>
-  mutateData<Expense>(`${baseUri}/${EXPENSES}/${id}`, body, "PUT");
+export const updateExpense = async ({
+  expenseId,
+  newExpense,
+}: {
+  expenseId: string;
+  newExpense: ExpenseInput;
+}) =>
+  mutateData<Expense>(`${baseUri}/${EXPENSES}/${expenseId}`, newExpense, "PUT");
 
-export const deleteExpense = async <T>(id: string) =>
+export const deleteExpense = async (id: string) =>
   mutateData<{ message: string }>(`${baseUri}/${EXPENSES}/${id}`, {}, "DELETE");

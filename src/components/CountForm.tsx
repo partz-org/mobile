@@ -1,15 +1,14 @@
 import React, { useState, Dispatch, FC, useRef } from "react";
 import { Alert, View, TextInput, ScrollView, StyleSheet } from "react-native";
-import { CountFormState } from "../flows/Home/screens/CreateCount/helper";
-import ParticipantCell from "../flows/Home/screens/CreateCount/ParticipantCell";
-import { capitalizeWord } from "../helpers/capitalizeWord";
-import { colors } from "../theme/colors";
-import BottomContainer from "./BottomContainer";
+import { CountFormState } from "~/flows/Home/screens/CreateCount/helper";
+import ParticipantCell from "~/flows/Home/screens/CreateCount/ParticipantCell";
+import { capitalizeWord } from "~/helpers";
+import { colors } from "~/theme";
 import Button from "./Button";
-import Card from "./Card";
 import Container from "./Container";
 import Input from "./Input";
-
+import Card from "./Card";
+import BottomContainer from "./BottomContainer";
 interface CountFormProps {
   countFormState: CountFormState;
   deleteParticipantFromCount?: (participant: string) => void;
@@ -66,7 +65,6 @@ const CountForm: FC<CountFormProps> = ({
         <Input
           autoFocus={!isEditing}
           placeholder={isEditing ? "Change the title " : "* Enter a title"}
-          placeholderTextColor={colors.primary}
           defaultValue=""
           onChangeText={(e) => onChangeText(e, "title")}
           value={countFormState.title}
@@ -76,7 +74,6 @@ const CountForm: FC<CountFormProps> = ({
           placeholder={
             isEditing ? "Change the description " : "Enter a description"
           }
-          placeholderTextColor={colors.primary}
           defaultValue=""
           style={styles.root}
           maxLength={200}
@@ -86,7 +83,6 @@ const CountForm: FC<CountFormProps> = ({
         {isEditing ? null : (
           <Input
             placeholder="* Enter your name"
-            placeholderTextColor={colors.primary}
             maxLength={15}
             defaultValue=""
             onChangeText={(e) => onChangeText(e, "name")}

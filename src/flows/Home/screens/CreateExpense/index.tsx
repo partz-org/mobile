@@ -1,26 +1,25 @@
 import React, { FC, useReducer, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { Platform, StyleSheet } from "react-native";
-import { colors } from "../../../../theme/colors";
-import { CreateExpenseRoute, CountListNavigation } from "../../types";
-import {
-  expenseFormReducer,
-  ExpenseInput,
-  ExpenseActionField,
-  initialExpenseState,
-  cannotSubmitExpense,
-} from "./expenseFormReducer";
 import {
   BottomContainer,
   Button,
   ErrorView,
   ExpenseForm,
   Loader,
-} from "../../../../components";
-import { COUNTS, createExpense, handleError } from "../../../../service";
+} from "~/components";
+import { useUser, useNotif } from "~/context";
+import { getCurrentParticipantName } from "~/helpers";
+import { createExpense, handleError, COUNTS } from "~/service";
+import { colors } from "~/theme";
 import { useQueryCountById } from "../../hooks";
-import { getCurrentParticipantName } from "../../../../helpers";
-import { useNotif, useUser } from "../../../../context";
+import { CreateExpenseRoute, CountListNavigation } from "../../types";
+import {
+  expenseFormReducer,
+  initialExpenseState,
+  cannotSubmitExpense,
+  ExpenseActionField,
+} from "./expenseFormReducer";
 
 interface CreateExpenseProps {
   route: CreateExpenseRoute;
@@ -42,21 +41,18 @@ const CreateExpense: FC<CreateExpenseProps> = ({ route, navigation }) => {
 
   const { sendNotif } = useNotif();
 
-  const createExpenseMutation = useMutation(
-    (newExpense: ExpenseInput) => createExpense(newExpense),
-    {
-      onError: handleError,
-      onSuccess: async () => {
-        await QC.refetchQueries(route.params.countId);
-        await QC.refetchQueries(COUNTS);
+  const createExpenseMutation = useMutation(createExpense, {
+    onError: handleError,
+    onSuccess: async () => {
+      await QC.refetchQueries(route.params.countId);
+      await QC.refetchQueries(COUNTS);
 
-        sendNotif({
-          message: "Your expense was created.",
-        });
-        navigation.goBack();
-      },
-    }
-  );
+      sendNotif({
+        message: "Your expense was created.",
+      });
+      navigation.goBack();
+    },
+  });
 
   const [expenseFormState, dispatchFormState] = useReducer(
     expenseFormReducer,

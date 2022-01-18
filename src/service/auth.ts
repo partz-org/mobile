@@ -12,5 +12,5 @@ export const login = async (body: LoginPayload) =>
 
 const LOGOUT = "logout";
 
-export const logout = async (body = {}) =>
-  mutateData<User>(`${baseUri}/${LOGOUT}`, body, "POST");
+export const logout = async () =>
+  mutateData<User>(`${baseUri}/${LOGOUT}`, undefined, "POST");

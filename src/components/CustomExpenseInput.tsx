@@ -23,7 +23,6 @@ const CustomExpenseInput: FC<CustomExpenseInputProps> = ({
       <Text style={styles.name}>{name}</Text>
       <Input
         placeholder={"Enter a custom amount"}
-        placeholderTextColor={colors.primary}
         keyboardType="numeric"
         defaultValue={"0"}
         onChangeText={e => {

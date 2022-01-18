@@ -1,43 +1,37 @@
 import React, { FC, useReducer, useState } from "react";
 import { StyleSheet, Alert } from "react-native";
-import Button from "../../../../components/Button";
-import { colors } from "../../../../theme/colors";
-import { handleError } from "../../../../service/helper";
+import { useQueryClient, useMutation } from "react-query";
 import * as Clipboard from "expo-clipboard";
+import { Button, CountForm } from "~/components";
+import { useNotif, useUser } from "~/context";
+import { createCount, handleError, COUNTS } from "~/service";
+import { colors } from "~/theme";
+import { CountNavigation } from "../../types";
 import {
   countFormReducer,
-  CountInput,
   initialCountState,
   ParticipantInput,
 } from "./helper";
-import { useMutation, useQueryClient } from "react-query";
-import { CountNavigation } from "../../types";
-import CountForm from "../../../../components/CountForm";
-import { useNotif, useUser } from "../../../../context/";
-import { COUNTS, createCount } from "../../../../service/counts";
 
 const CreateCount: FC<CreateCountProps> = ({ navigation }) => {
   const { sendNotif } = useNotif();
   const QC = useQueryClient();
 
-  const createCountMutation = useMutation(
-    (newCount: CountInput) => createCount(newCount),
-    {
-      onError: handleError,
-      onSuccess: async (data) => {
-        QC.refetchQueries([COUNTS]);
-        Clipboard.setString(data!.id);
+  const createCountMutation = useMutation(createCount, {
+    onError: handleError,
+    onSuccess: async (data) => {
+      QC.refetchQueries([COUNTS]);
+      Clipboard.setString(data!.id);
 
-        // Clipboard.setString(`wej://joincount/${data!.id}`);
-        sendNotif({
-          message:
-            "Count created! The number was copied to your clipboard. Share it with your friends!",
-          timeout: 5000,
-        });
-        navigation.goBack();
-      },
-    }
-  );
+      // Clipboard.setString(`wej://joincount/${data!.id}`);
+      sendNotif({
+        message:
+          "Count created! The number was copied to your clipboard. Share it with your friends!",
+        timeout: 5000,
+      });
+      navigation.goBack();
+    },
+  });
   const { user } = useUser();
 
   const [participants, setParticipants] = useState<string[]>([]);

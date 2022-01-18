@@ -1,7 +1,6 @@
-import { CountInput } from "../flows/Home/screens/CreateCount/helper";
+import { CountInput } from "~/flows/Home/screens/CreateCount/helper";
+import { Count } from "~/types/count";
 import { baseUri, getData, mutateData } from "./helper";
-
-import type { Count } from "../types/count";
 
 export const COUNTS = "counts";
 
@@ -17,8 +16,13 @@ export const getCountById = async (id: string) =>
 export const createCount = async (body: CountInput) =>
   mutateData<Count>(`${baseUri}/${COUNTS}`, body, "POST");
 
-export const updateCount = async (id: string, body: CountInput) =>
-  mutateData<Count>(`${baseUri}/${COUNTS}/${id}`, body, "PUT");
+export const updateCount = async ({
+  countId,
+  newCount,
+}: {
+  countId: string;
+  newCount: CountInput;
+}) => mutateData<Count>(`${baseUri}/${COUNTS}/${countId}`, newCount, "PUT");
 
 export const deleteCount = async (id: string) =>
   mutateData<{ message: string }>(`${baseUri}/${COUNTS}/${id}`, {}, "DELETE");

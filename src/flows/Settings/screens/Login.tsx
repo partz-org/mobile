@@ -15,7 +15,7 @@ const Login: FC = () => {
           {"Login to enjoy cool features 🚀"}
         </Text>
         <Text style={styles.loginDescription}>
-          {"💾 Retreive all the counts you saved with your account"}
+          {"💾 Retrieve all the counts you saved with your account"}
         </Text>
         <Text style={styles.loginDescription}>
           {

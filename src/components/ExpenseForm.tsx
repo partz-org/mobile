@@ -8,22 +8,22 @@ import {
   StyleSheet,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import ParticipantCell from "../flows/Home/screens/CreateCount/ParticipantCell";
-import { colors } from "../theme/colors";
-import Card from "./Card";
-import Container from "./Container";
-import Button from "./Button";
-import BottomDrawer from "./BottomDrawer";
-import CustomExpenseInput from "./CustomExpenseInput";
-import Input from "./Input";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import ParticipantCell from "~/flows/Home/screens/CreateCount/ParticipantCell";
 import {
   ExpenseAction,
-  ExpenseActionField,
   ExpenseFormState,
-} from "../flows/Home/screens/CreateExpense/expenseFormReducer";
-import type { Count } from "../types/count";
-import { getParticipantNames, sortAlphabetically } from "../helpers";
+  ExpenseActionField,
+} from "~/flows/Home/screens/CreateExpense/expenseFormReducer";
+import { getParticipantNames, sortAlphabetically } from "~/helpers";
+import { colors } from "~/theme";
+import { Count } from "~/types/count";
+import Button from "./Button";
+import Container from "./Container";
+import Input from "./Input";
+import Card from "./Card";
+import BottomDrawer from "./BottomDrawer";
+import CustomExpenseInput from "./CustomExpenseInput";
 
 interface ExpenseFormProps {
   currentCount: Count;
@@ -72,7 +72,6 @@ const ExpenseForm: FC<ExpenseFormProps> = ({
       <Input
         autoFocus={!isEditing}
         placeholder={isEditing ? "Change the title" : "* Enter a title"}
-        placeholderTextColor={colors.primary}
         defaultValue=""
         onChangeText={(v) => onChange(v, "title")}
         value={expenseFormState.title}
@@ -81,7 +80,6 @@ const ExpenseForm: FC<ExpenseFormProps> = ({
         placeholder={
           isEditing ? "Change the description" : "Enter a description"
         }
-        placeholderTextColor={colors.primary}
         defaultValue=""
         onChangeText={(v) => onChange(v, "description")}
         value={expenseFormState.description}
@@ -89,7 +87,6 @@ const ExpenseForm: FC<ExpenseFormProps> = ({
       <Input
         placeholder={isEditing ? "Change the amount" : "* Enter the amount"}
         keyboardType="numeric"
-        placeholderTextColor={colors.primary}
         defaultValue=""
         onChangeText={(v) => {
           if (isEditing) {

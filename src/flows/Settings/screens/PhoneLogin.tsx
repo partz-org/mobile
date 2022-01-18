@@ -1,42 +1,63 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { PhoneAuthProvider, signInWithCredential } from "firebase/auth";
-import { Button, Input, BottomContainer } from "~/components";
+import { useQueryClient, useMutation } from "react-query";
+import PhoneInput from "react-native-phone-number-input";
+import { Button, Input, BottomContainer, BottomDrawer } from "~/components";
 import { useNotif, useUser } from "~/context";
 import { updateStoredUser } from "~/helpers";
 import { LoginPayload, login, handleError, COUNTS } from "~/service";
 import { colors } from "~/theme";
 import { app, auth } from "~/utils";
-import { useNavigation } from "@react-navigation/native";
-import { useQueryClient, useMutation } from "react-query";
 
 const PhoneLogin: FC = () => {
   const [verificationId, setVerificationId] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
+  const [shouldShowModal, setShouldShowModal] = useState(false);
   const { sendNotif } = useNotif();
   const recaptchaVerifier = React.useRef(null);
   const { dispatch } = useUser();
   const { goBack } = useNavigation();
   const QC = useQueryClient();
+  const phoneInput = useRef<PhoneInput>(null);
+  const [valid, setValid] = useState(false);
 
-  const loginMutation = useMutation(
-    (loginInput: LoginPayload) => login(loginInput),
-    {
-      onError: handleError,
-      onSuccess: async (loggedUser) => {
-        await updateStoredUser(dispatch, loggedUser);
-        await QC.refetchQueries([COUNTS]);
+  useEffect(() => {
+    setValid(phoneInput.current?.isValidNumber(phoneNumber) || false);
+  }, [phoneNumber]);
 
-        sendNotif({
-          message: "Login successful!",
-        });
+  const loginMutation = useMutation(login, {
+    onError: handleError,
+    onSuccess: async (loggedUser) => {
+      await updateStoredUser(dispatch, loggedUser);
+      await QC.refetchQueries([COUNTS]);
 
-        goBack();
-      },
+      sendNotif({
+        message: "Login successful!",
+      });
+
+      goBack();
+    },
+  });
+
+  const verifyPhoneCode = async () => {
+    try {
+      const credential = PhoneAuthProvider.credential(
+        verificationId,
+        verificationCode
+      );
+      await signInWithCredential(auth, credential);
+
+      loginMutation.mutate({ phoneNumber: phoneNumber });
+
+      sendNotif({ message: "ggggs" });
+    } catch (err: any) {
+      sendNotif({ message: err, level: "danger" });
     }
-  );
+  };
 
   return (
     <View style={styles.margin}>
@@ -44,72 +65,64 @@ const PhoneLogin: FC = () => {
         ref={recaptchaVerifier}
         firebaseConfig={app.options}
       />
-
-      <Input
-        style={{ marginTop: 50, fontSize: 17 }}
-        placeholder="+1 999 999 9999"
-        editable={!verificationId}
-        placeholderTextColor={colors.primary}
+      <PhoneInput
+        ref={phoneInput}
+        defaultCode={"FR"}
+        defaultValue={phoneNumber}
+        layout="first"
+        onChangeFormattedText={setPhoneNumber}
+        containerStyle={{ alignSelf: "center", marginBottom: 50 }}
+        withDarkTheme
+        withShadow
         autoFocus
-        autoCompleteType="tel"
-        keyboardType="phone-pad"
-        textContentType="telephoneNumber"
-        onChangeText={(phoneNumber) => setPhoneNumber(phoneNumber)}
       />
 
-      <Text>Enter your phone number</Text>
-
-      <Input
-        style={{ marginVertical: 10, fontSize: 17 }}
-        placeholderTextColor={verificationId ? colors.primary : colors.grey}
-        editable={!!verificationId}
-        placeholder="123456"
-        autoCompleteType="tel"
-        keyboardType="phone-pad"
-        textContentType="telephoneNumber"
-        onChangeText={setVerificationCode}
+      <Button
+        title="Send Code"
+        disabled={!valid || !!verificationId}
+        style={styles.sendCodeButton}
+        onPress={async () => {
+          try {
+            const phoneProvider = new PhoneAuthProvider(auth);
+            const verificationId = await phoneProvider.verifyPhoneNumber(
+              phoneNumber,
+              //override annoying type error
+              recaptchaVerifier.current as any
+            );
+            setVerificationId(verificationId);
+            setShouldShowModal(true);
+          } catch (err: any) {
+            sendNotif({ message: err, level: "danger" });
+          }
+        }}
       />
-      <Text>Enter the verification code</Text>
 
-      <BottomContainer>
-        <Button
-          title="Send Code"
-          disabled={!phoneNumber && !!verificationId}
-          onPress={async () => {
-            try {
-              const phoneProvider = new PhoneAuthProvider(auth);
-              const verificationId = await phoneProvider.verifyPhoneNumber(
-                phoneNumber,
-                //override annoying type error
-                recaptchaVerifier.current as any
-              );
-              setVerificationId(verificationId);
-            } catch (err: any) {
-              sendNotif({ message: err, level: "danger" });
-            }
-          }}
+      <BottomDrawer
+        shouldShowModal={shouldShowModal}
+        setShouldShowModal={setShouldShowModal}
+        title="Enter the code you received by SMS"
+      >
+        <Input
+          autoFocus
+          editable={!!verificationId}
+          value={verificationCode}
+          placeholder="123456"
+          autoCompleteType="tel"
+          keyboardType="phone-pad"
+          textContentType="telephoneNumber"
+          onChangeText={setVerificationCode}
+          style={styles.modalInput}
+          onSubmitEditing={verifyPhoneCode}
         />
         <Button
+          icon="login"
+          iconColor={colors.white}
+          onPress={verifyPhoneCode}
           title="Verify Code"
-          disabled={!verificationCode}
           type="secondary"
-          onPress={async () => {
-            try {
-              const credential = PhoneAuthProvider.credential(
-                verificationId,
-                verificationCode
-              );
-              await signInWithCredential(auth, credential);
-
-              loginMutation.mutate({ phoneNumber: phoneNumber });
-
-              sendNotif({ message: "ggggs" });
-            } catch (err: any) {
-              sendNotif({ message: err, level: "danger" });
-            }
-          }}
+          style={styles.buttonVerifyPhone}
         />
-      </BottomContainer>
+      </BottomDrawer>
     </View>
   );
 };
@@ -117,6 +130,7 @@ const styles = StyleSheet.create({
   card: {
     marginTop: 30,
   },
+  sendCodeButton: { flex: 0 },
   inputContainer: {
     display: "flex",
     flex: 1,
@@ -132,6 +146,14 @@ const styles = StyleSheet.create({
     display: "flex",
     flex: 1,
     marginHorizontal: 20,
+    marginTop: 100,
+  },
+  modalInput: {
+    alignSelf: "center",
+    width: 200,
+  },
+  buttonVerifyPhone: {
+    alignSelf: "center",
   },
 });
 
