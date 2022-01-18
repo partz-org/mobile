@@ -6,7 +6,6 @@ export const generateInitialState = (expense?: Expense): ExpenseFormState => ({
   customOwers: expense?.customOwers || [],
   customPayers: expense?.customPayers || [],
   description: expense?.description || "",
-  mutatedBy: "",
   owers: expense?.owers || [],
   payers: expense?.payers || [],
   title: expense?.title || "",

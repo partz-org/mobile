@@ -2,7 +2,6 @@ export interface ExpenseFormState {
   [key: string]: any;
   amount: string;
   description: string;
-  mutatedBy: string;
   payers: string[];
   owers: string[];
   customOwers: ExpenseParticipant[];
@@ -19,7 +18,6 @@ export interface ExpenseParticipant {
 export interface ExpenseInput extends Partial<ExpenseFormState> {
   count?: string;
   currency?: string;
-  mutatedBy: string;
   payers: string[];
   owers: string[];
   customOwers: ExpenseParticipant[];
@@ -31,7 +29,6 @@ export const initialExpenseState: ExpenseFormState = {
   customOwers: [],
   customPayers: [],
   description: "",
-  mutatedBy: "",
   owers: [],
   payers: [],
   title: "",

@@ -29,6 +29,7 @@ const CountList: FC<CountListProps> = ({ navigation }) => {
   const [countIdToJoin, setCountIdToJoin] = useState<string>("");
 
   const QC = useQueryClient();
+  const { sendNotif } = useNotif();
 
   const { data: userCounts, isLoading } = useQuery<Count[]>(
     COUNTS,
@@ -72,8 +73,6 @@ const CountList: FC<CountListProps> = ({ navigation }) => {
       countTotal: countId.total,
     });
   };
-
-  const { sendNotif } = useNotif();
 
   return (
     <>

@@ -78,10 +78,6 @@ const CreateExpense: FC<CreateExpenseProps> = ({ route, navigation }) => {
     createExpenseMutation.mutate({
       ...expenseFormState,
       count: route.params.countId,
-      mutatedBy: getCurrentParticipantName(
-        currentCount.participants,
-        userContext
-      ),
     });
   };
 
