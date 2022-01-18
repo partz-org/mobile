@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useUser } from "../context";
-import { handleError, createTempUser } from "../service";
+import { handleError, createTempUser, getUserById } from "../service";
 import * as Notifications from "expo-notifications";
 import { User } from "../types/user";
 
@@ -14,14 +14,7 @@ export const useFetchOrCreateUser = () => {
       const getOrCreateUser = async () => {
         const result = await AsyncStorage.getItem("user");
 
-        const storedUser: User = JSON.parse(result || "{}");
-
-        if (storedUser?.id) {
-          dispatch({
-            payload: { user: storedUser },
-            type: "UPDATE_STATE",
-          });
-        } else {
+        if (!result) {
           try {
             const { data: expoToken } =
               await Notifications.getExpoPushTokenAsync();
@@ -36,7 +29,20 @@ export const useFetchOrCreateUser = () => {
             });
           } catch (error: any) {
             handleError(error);
+          } finally {
+            return;
           }
+        }
+
+        const { id: storedUserId }: User = JSON.parse(result);
+
+        const storedUserFromDB = await getUserById(storedUserId);
+
+        if (typeof storedUserFromDB === "object") {
+          dispatch({
+            payload: { user: storedUserFromDB },
+            type: "UPDATE_STATE",
+          });
         }
       };
       getOrCreateUser();
